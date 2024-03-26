@@ -29,10 +29,10 @@ const SignupPage = () => {
               <p className="text-sm text-muted-foreground">
                 Você já tem uma conta?{" "}
                 <Link
-                  href="/auth/singup"
+                  href="/auth/login"
                   className="underline underline-offset-4 hover:text-primary"
                 >
-                  Vá para o login.
+                  Vá para o login
                 </Link>
                 .
               </p>

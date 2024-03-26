@@ -28,7 +28,7 @@ const LoginPage = () => {
               <p className="text-sm text-muted-foreground">
                 Insira seu email e senha. Não tem uma conta?{" "}
                 <Link
-                  href="/auth/singup"
+                  href="/auth/signup"
                   className="underline underline-offset-4 hover:text-primary"
                 >
                   Cadastre-se

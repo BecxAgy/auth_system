@@ -20,6 +20,8 @@ import { Button } from "./ui/button";
 import Social from "./social";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(50),
@@ -28,6 +30,7 @@ const formSchema = z.object({
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   // 1. Define your form.
@@ -36,7 +39,17 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     defaultValues: {},
   });
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      setIsLoading(true);
+      const res = await axios.post("/api/users/login", values);
+      console.log(res.data);
+      router.push("/");
+    } catch (error: any) {
+      console.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
     console.log(values);
   }
   return (

@@ -22,6 +22,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import MessageError from "./message-error";
+
 const formSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8).max(50),
@@ -32,6 +34,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -40,17 +43,19 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   });
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      setIsLoading(true);
-      const res = await axios.post("/api/users/login", values);
-      console.log(res.data);
-      router.push("/");
-    } catch (error: any) {
-      console.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-    console.log(values);
+    const res = await axios
+      .post("/api/users/login", values)
+      .then((res) => {
+        router.push("/");
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(error.response.data.error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
   return (
     <div className={cn("grid gap-6", className)} {...props}>
@@ -98,6 +103,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               )}
               Entrar
             </Button>
+            {error && <MessageError message={error} />}
           </div>
         </form>
       </Form>

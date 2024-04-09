@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import { debug } from "console";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
@@ -7,6 +8,7 @@ export default function Home() {
   const router = useRouter();
   const logout = async () => {
     try {
+      debugger;
       await axios.get("/api/users/logout");
       router.push("/auth/login");
     } catch (error: any) {

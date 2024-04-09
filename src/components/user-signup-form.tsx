@@ -32,6 +32,7 @@ interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 export function UserSignUpForm({ className, ...props }: UserAuthFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | null>(null);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -40,17 +41,21 @@ export function UserSignUpForm({ className, ...props }: UserAuthFormProps) {
   });
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      setIsLoading(true);
-      const res = await axios.post("/api/users/signup", values);
-      console.log(res.data);
-      router.push("/auth/login");
-    } catch (error: any) {
-      console.error(error.message);
-    } finally {
-      setIsLoading(false);
-    }
-    console.log(values);
+    //refactor for then catch finally
+    setIsLoading(true);
+    axios
+      .post("/api/users/signup", values)
+      .then((res) => {
+        console.log(res.data);
+        router.push("/auth/login");
+      })
+      .catch((error) => {
+        console.log(error);
+        setError(error.response.data.error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }
   return (
     <div className={cn("grid gap-6", className)} {...props}>
